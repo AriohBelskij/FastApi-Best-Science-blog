@@ -1,2 +1,5 @@
-# FastApi-Best-Sience-blog
-The best sience blog ever
+# FastApi-Best-Science-blog
+The best science blog ever
+
+
+The best readme is coming...
