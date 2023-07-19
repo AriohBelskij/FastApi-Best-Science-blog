@@ -24,8 +24,7 @@ class Author(Base):
     field: str = Column(String, nullable=False)
 
     article = relationship(
-        Article, back_populates="author", cascade="all, delete-orphan"
+        Article,
+        back_populates="author",
     )
-    comment = relationship(
-        Comment, back_populates="author", cascade="all, delete-orphan"
-    )
+    comment = relationship(Comment, back_populates="author")

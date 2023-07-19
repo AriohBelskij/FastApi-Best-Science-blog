@@ -22,13 +22,10 @@ class Article(Base):
     status: str = Column(String, nullable=False, default="self_check")
 
     author_id: int = Column(
-        Integer, ForeignKey("author.id"), name="author_article"
+        Integer,
+        ForeignKey("author.id", ondelete="CASCADE"),
+        name="author_article",
     )
     author = relationship("Author", back_populates="article")
 
-    comment = relationship(
-        "Comment",
-        back_populates="article",
-        uselist=False,
-        cascade="all, delete-orphan",
-    )
+    comment = relationship("Comment", back_populates="article")

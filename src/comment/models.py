@@ -27,9 +27,15 @@ class Comment(Base):
     conclusion: str = Column(String, nullable=True)
 
     author_id: int = Column(
-        Integer, ForeignKey("author.id"), name="author_comment"
+        Integer,
+        ForeignKey("author.id", ondelete="CASCADE"),
+        name="author_comment",
     )
     author = relationship("Author", back_populates="comment")
 
-    article_id = Column(Integer, ForeignKey("article.id"), unique=True)
-    article = relationship("Article", uselist=False, backref="comment")
+    article_id = Column(
+        Integer,
+        ForeignKey("article.id", ondelete="CASCADE"),
+        name="article_comment",
+    )
+    article = relationship("Article", back_populates="comment")
