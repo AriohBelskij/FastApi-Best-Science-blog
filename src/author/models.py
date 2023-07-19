@@ -23,5 +23,9 @@ class Author(Base):
     updated_at: DateTime = Column(DateTime(), onupdate=now())
     field: str = Column(String, nullable=False)
 
-    article = relationship(Article, back_populates="author")
-    comment = relationship(Comment, back_populates="author")
+    article = relationship(
+        Article, back_populates="author", cascade="all, delete-orphan"
+    )
+    comment = relationship(
+        Comment, back_populates="author", cascade="all, delete-orphan"
+    )

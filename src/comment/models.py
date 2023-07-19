@@ -18,7 +18,7 @@ from src.database.database import Base
 class Comment(Base):
     __tablename__ = "comment"
 
-    id: int = Column(Integer, primary_key=True)
+    id: int = Column(Integer, primary_key=True, index=True)
     uuid: uuid = Column(UUID(as_uuid=True), nullable=False, default=uuid.uuid4)
     body: str = Column(Text, nullable=False)
     created_at: DateTime = Column(
@@ -31,6 +31,5 @@ class Comment(Base):
     )
     author = relationship("Author", back_populates="comment")
 
-    article_id = Column(
-        Integer, ForeignKey("article.id"), name="article_comment"
-    )
+    article_id = Column(Integer, ForeignKey("article.id"), unique=True)
+    article = relationship("Article", uselist=False, backref="comment")

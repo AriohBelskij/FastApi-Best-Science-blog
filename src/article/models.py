@@ -26,4 +26,9 @@ class Article(Base):
     )
     author = relationship("Author", back_populates="article")
 
-    comment = relationship("Comment", uselist=False, backref="article")
+    comment = relationship(
+        "Comment",
+        back_populates="article",
+        uselist=False,
+        cascade="all, delete-orphan",
+    )
