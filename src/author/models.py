@@ -27,4 +27,4 @@ class Author(Base):
         Article,
         back_populates="author",
     )
-    comment = relationship(Comment, back_populates="author")
+    comments = relationship(Comment, back_populates="author")
