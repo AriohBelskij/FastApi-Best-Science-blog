@@ -16,7 +16,7 @@ from src.database.database import Base
 
 
 class Comment(Base):
-    __tablename__ = "comment"
+    __tablename__ = "comments"
 
     id: int = Column(Integer, primary_key=True, index=True)
     uuid: uuid = Column(UUID(as_uuid=True), nullable=False, default=uuid.uuid4)
@@ -31,11 +31,11 @@ class Comment(Base):
         ForeignKey("author.id", ondelete="CASCADE"),
         name="author_comment",
     )
-    author = relationship("Author", back_populates="comment")
+    author = relationship("Author", back_populates="comments")
 
     article_id = Column(
         Integer,
         ForeignKey("article.id", ondelete="CASCADE"),
         name="article_comment",
     )
-    article = relationship("Article", back_populates="comment")
+    article = relationship("Article", back_populates="comments")
