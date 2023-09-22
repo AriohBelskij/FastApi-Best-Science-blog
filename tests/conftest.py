@@ -2,8 +2,6 @@ import asyncio
 from typing import AsyncGenerator
 
 import pytest
-from fastapi.testclient import TestClient
-from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
@@ -51,59 +49,20 @@ async def prepare_database():
 
 # SETUP
 @pytest.fixture(scope="session")
-def event_loop(request):
+def event_loop():
     """Create an instance of the default event loop for each test case."""
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
-    loop.close()
-
-
-client = TestClient(app)
-
-
-@pytest.fixture(scope="session")
-async def ac() -> AsyncGenerator[AsyncClient, None]:
-    async with AsyncClient(app=app, base_url="http://test") as ac:
-        yield ac
 
 
 @pytest.fixture(scope="session")
 async def get_db():
-    con = await engine_test.connect()
-    transaction = await con.begin()
+    connection = await engine_test.connect()
+    transaction = await connection.begin()
+    async_session_maker.configure(bind=connection)
 
     async with async_session_maker() as session:
         yield session
 
     await transaction.rollback()
-    await con.close()
-
-
-def get_author_payload(
-    name: str = "John", surname: str = "Doe", field: str = "Cs"
-) -> dict:
-    return {"name": name, "surname": surname, "field": field}
-
-
-def get_article_payload(
-    research_field: str = "CS",
-    summary: str = "some text",
-    title: str = "some title",
-    content: str = "some content",
-    status: str = "self_check",
-    author_id: int = 1,
-) -> dict:
-    return {
-        "research_field": research_field,
-        "summary": summary,
-        "title": title,
-        "content": content,
-        "status": status,
-        "author_id": author_id,
-    }
-
-
-def get_comment_payload(
-    body: str = "Some text of comment", author_id: int = 1, article_id: int = 1
-) -> dict:
-    return {"body": body, "author_id": author_id, "article_id": article_id}
+    await connection.close()
