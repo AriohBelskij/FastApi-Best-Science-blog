@@ -26,7 +26,7 @@ class Article(Base):
         ForeignKey("authors.id", ondelete="CASCADE"),
         name="author_article",
     )
-    author = relationship(
+    authors = relationship(
         "Author", back_populates="articles", foreign_keys="Article.author_id"
     )
 

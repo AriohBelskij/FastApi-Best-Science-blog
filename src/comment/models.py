@@ -31,15 +31,14 @@ class Comment(Base):
         ForeignKey("authors.id", ondelete="CASCADE"),
         name="author_comment",
     )
-    author = relationship("Author", back_populates="comments")
+    authors = relationship("Author", back_populates="comments")
 
     article_id = Column(
         Integer,
         ForeignKey("articles.id", ondelete="CASCADE"),
         name="article_comment",
     )
-    article = relationship(
+    articles = relationship(
         "Article",
         back_populates="comments",
-        foreign_keys="Comment.articles_id",
     )
