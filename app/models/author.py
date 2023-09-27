@@ -4,9 +4,9 @@ from sqlalchemy.orm import relationship
 
 from sqlalchemy.sql.functions import now
 
-from src.article.models import Article
-from src.comment.models import Comment
-from src.database.database import Base
+from app.models.article import Article
+from app.models.comment import Comment
+from app.core.database import Base
 
 
 class Author(Base):

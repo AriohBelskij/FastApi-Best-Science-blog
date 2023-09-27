@@ -1,8 +1,8 @@
 import pytest
 from sqlalchemy import insert
 
-from src.article.models import Article
-from src.author.models import Author
+from app.models.article import Article
+from app.models.author import Author
 
 
 @pytest.fixture(scope="session")

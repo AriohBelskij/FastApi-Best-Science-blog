@@ -5,7 +5,7 @@ import pytest
 from sqlalchemy import insert
 from sqlalchemy.exc import DBAPIError
 
-from src.article.models import Article
+from app.models.article import Article
 
 
 async def test_article_created_with_valid_data(

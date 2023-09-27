@@ -6,15 +6,15 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
-from src.database.database import get_async_session, Base, metadata
-from src.config import (
+from app.core.database import get_async_session, Base, metadata
+from app.core.config import (
     DB_HOST_TEST,
     DB_NAME_TEST,
     DB_PASS_TEST,
     DB_PORT_TEST,
     DB_USER_TEST,
 )
-from src.main import app
+from app.main import app
 
 # DATABASE
 DATABASE_URL_TEST = (
