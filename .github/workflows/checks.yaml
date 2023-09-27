@@ -1,0 +1,21 @@
+name: Code checks
+on:
+  pull_request:
+    branches: [ main ]
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/chekout@v2
+      - name: Install python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11.5
+      - name: Install deps
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          poetry install
+      - name: Run flake8
+        run: flake8
