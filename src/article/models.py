@@ -7,7 +7,7 @@ from src.database.database import Base
 
 
 class Article(Base):
-    __tablename__ = "article"
+    __tablename__ = "articles"
 
     id: int = Column(Integer, primary_key=True, nullable=False)
     uuid: uuid = Column(UUID(as_uuid=True), nullable=False, default=uuid.uuid4)
@@ -23,9 +23,11 @@ class Article(Base):
 
     author_id: int = Column(
         Integer,
-        ForeignKey("author.id", ondelete="CASCADE"),
+        ForeignKey("authors.id", ondelete="CASCADE"),
         name="author_article",
     )
-    author = relationship("Author", back_populates="article")
+    author = relationship(
+        "Author", back_populates="articles", foreign_keys="Article.author_id"
+    )
 
-    comments = relationship("Comment", back_populates="article")
+    comments = relationship("Comment", back_populates="articles")

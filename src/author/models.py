@@ -10,7 +10,7 @@ from src.database.database import Base
 
 
 class Author(Base):
-    __tablename__ = "author"
+    __tablename__ = "authors"
 
     id: int = Column(Integer, primary_key=True)
     uuid: uuid = Column(UUID(as_uuid=True), nullable=False, default=uuid.uuid4)
@@ -23,8 +23,5 @@ class Author(Base):
     updated_at: DateTime = Column(DateTime(), onupdate=now())
     field: str = Column(String, nullable=False)
 
-    article = relationship(
-        Article,
-        back_populates="author",
-    )
-    comments = relationship(Comment, back_populates="author")
+    articles = relationship(Article, back_populates="authors")
+    comments = relationship(Comment, back_populates="authors")
