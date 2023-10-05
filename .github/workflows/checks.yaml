@@ -1,0 +1,60 @@
+name: Code checks
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ## Environment  variable
+      DB_HOST_TEST: localhost
+      DB_PORT_TEST: 5432
+      DB_NAME_TEST: mock
+      DB_USER_TEST: mock
+      DB_PASS_TEST: mock
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_DB: ${{ env.DB_NAME_TEST }}
+          POSTGRES_USER: ${{ env.DB_USER_TEST }}
+          POSTGRES_PASSWORD: ${{ env.DB_PASS_TEST }}
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11.5
+      - name: Install deps
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          poetry install
+      - name: Run flake8
+        run: poetry run flake8
+      - name: Wait for postgres to start
+        run: |
+          until nc -z -v -w30 localhost 5432
+          do
+          echo "Waiting for postgres start."
+          sleep 1
+          done
+
+      - name: Set up .env for tests
+        run: |
+            echo "DB_HOST=${DB_HOST_TEST}" >> .env
+            echo "DB_PORT=${DB_PORT_TEST}" >> .env
+            echo "DB_NAME=${DB_NAME_TEST}" >> .env
+            echo "DB_USER=${DB_USER_TEST}" >> .env
+            echo "DB_PASS=${DB_PASS_TEST}" >> .env
+      - name: Run tests
+        run: poetry run pytest
