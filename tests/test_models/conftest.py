@@ -1,6 +1,4 @@
 import pytest
-from sqlalchemy import insert
-
 from app.models.article import Article
 from app.models.author import Author
 
@@ -51,13 +49,19 @@ def get_invalid_comment_payload() -> dict:
 
 @pytest.fixture(scope="session")
 async def create_author(get_db, get_author_payload):
-    query = insert(Author).returning(Author)
-    response = await get_db.execute(query, get_author_payload)
-    return response.scalar_one()
+    author = Author(**get_author_payload)
+
+    get_db.add(author)
+    await get_db.commit()
+
+    return author
 
 
 @pytest.fixture(scope="session")
 async def create_article(get_db, create_author, get_article_payload):
-    query = insert(Article).returning(Article)
-    response = await get_db.execute(query, get_article_payload)
-    return response.scalar_one()
+    article = Article(**get_article_payload)
+
+    get_db.add(article)
+    await get_db.commit()
+
+    return article

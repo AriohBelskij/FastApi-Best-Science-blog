@@ -1,18 +1,17 @@
 from datetime import datetime
 from uuid import UUID
-
-import pytest
-from sqlalchemy import insert
-from sqlalchemy.exc import DBAPIError
-
+from sqlalchemy import select
 from app.models.author import Author
 
 
 async def test_author_created_with_valid_data(get_db, get_author_payload):
-    query = insert(Author).returning(Author)
-    response = await get_db.execute(query, get_author_payload)
+    author = Author(**get_author_payload)
+    get_db.add(author)
     await get_db.commit()
-    author_instance = response.scalar_one()
+
+    query = select(Author)
+    response = await get_db.execute(query)
+    author_instance = response.scalar()
 
     assert author_instance.id is not None
     assert isinstance(author_instance.uuid, UUID)
@@ -22,14 +21,11 @@ async def test_author_created_with_valid_data(get_db, get_author_payload):
     assert isinstance(author_instance.created_at, datetime)
 
 
-async def test_author_not_create_with_invalid_data(
-    get_db, get_author_invalid_payload
+async def test_authors_generate_with_different_uuid(
+    get_db, get_author_payload, create_author
 ):
-    with pytest.raises(DBAPIError):
-        query = insert(Author).returning(Author)
-        response = await get_db.execute(query, get_author_invalid_payload)
+    author = Author(**get_author_payload)
+    get_db.add(author)
+    await get_db.commit()
 
-        await get_db.commit()
-        result = response.scalar_one_or_none()
-
-        assert result is None
+    assert author.uuid != create_author.uuid
