@@ -5,7 +5,7 @@ import pytest
 from sqlalchemy import insert
 from sqlalchemy.exc import DBAPIError
 
-from src.author.models import Author
+from app.models.author import Author
 
 
 async def test_author_created_with_valid_data(get_db, get_author_payload):

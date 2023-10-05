@@ -12,7 +12,7 @@ from sqlalchemy.orm import relationship
 
 from sqlalchemy.sql.functions import now
 
-from src.database.database import Base
+from app.core.database import Base
 
 
 class Comment(Base):

@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy import insert
 from sqlalchemy.exc import DBAPIError
 
-from src.comment.models import Comment
+from app.models.comment import Comment
 
 
 async def test_comment_created_with_valid_data(
