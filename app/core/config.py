@@ -1,16 +1,39 @@
-from dotenv import load_dotenv
-import os
+from pydantic import Field
+from pydantic_settings import BaseSettings
 
-load_dotenv()
 
-DB_HOST = os.environ.get("DB_HOST")
-DB_PORT = os.environ.get("DB_PORT")
-DB_NAME = os.environ.get("DB_NAME")
-DB_USER = os.environ.get("DB_USER")
-DB_PASS = os.environ.get("DB_PASS")
+class DatabaseSettings(BaseSettings):
+    db_host: str = Field("localhost", env="DB_HOST")
+    db_port: int = Field(5432, env="DB_PORT")
+    db_user: str = Field("user", env="DB_USER")
+    db_name: str = Field("postgres", env="DB_NAME")
+    db_pass: str = Field("password", env="DB_PASS")
 
-DB_HOST_TEST = os.environ.get("DB_HOST_TEST")
-DB_PORT_TEST = os.environ.get("DB_PORT_TEST")
-DB_NAME_TEST = os.environ.get("DB_NAME_TEST")
-DB_USER_TEST = os.environ.get("DB_USER_TEST")
-DB_PASS_TEST = os.environ.get("DB_PASS_TEST")
+    testing_host: str = Field("localhost", env="TESTING_HOST")
+    testing_port: int = Field(5432, env="TESTING_PORT")
+    testing_user: str = Field("user", env="TESTING_USER")
+    testing_name: str = Field("postgres", env="TESTING_NAME")
+    testing_pass: str = Field("password", env="TESTING_PASS")
+
+    class Config:
+        env_file = "../../.env"
+        env_file_encoding = "utf-8"
+
+    def get_db_url(self):
+        return (
+            f"postgresql+asyncpg://{self.db_user}:{self.db_pass}"
+            f"@{self.db_host}:{self.db_port}/{self.db_name}"
+        )
+
+    def get_testing_db_url(self):
+        return (
+            f"postgresql+asyncpg://{self.testing_user}:{self.testing_pass}"
+            f"@{self.testing_host}:{self.testing_port}/{self.testing_name}"
+        )
+
+
+class Setting(BaseSettings):
+    database: DatabaseSettings = DatabaseSettings()
+
+
+settings = Setting()
