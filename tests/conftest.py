@@ -7,7 +7,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
 from app.core.config import settings
-from app.core.database import get_async_session, Base, metadata
+from app.core.database import get_async_session
+from app.models.base import Base
 from app.main import app
 
 # DATABASE
@@ -17,7 +18,7 @@ engine_test = create_async_engine(DATABASE_URL_TEST, poolclass=NullPool)
 async_session_maker = sessionmaker(
     engine_test, class_=AsyncSession, expire_on_commit=False
 )
-metadata.bind = engine_test
+Base.metadata.bind = engine_test
 
 
 async def override_get_async_session() -> AsyncGenerator[AsyncSession, None]:

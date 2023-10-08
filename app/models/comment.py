@@ -1,44 +1,30 @@
-import uuid as uuid
+from typing import Optional, TYPE_CHECKING
+
 from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-    DateTime,
-    UUID,
     ForeignKey,
     Text,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 
-from sqlalchemy.sql.functions import now
+from app.models import Base
 
-from app.core.database import Base
+if TYPE_CHECKING:
+    from .author import Author
+    from .article import Article
+
+__all__ = ["Comment"]
 
 
 class Comment(Base):
-    __tablename__ = "comments"
+    body: Mapped[str] = mapped_column(Text(), nullable=False)
+    conclusion: Mapped[Optional[str]] = mapped_column(nullable=True)
 
-    id: int = Column(Integer, primary_key=True, index=True)
-    uuid: uuid = Column(UUID(as_uuid=True), nullable=False, default=uuid.uuid4)
-    body: str = Column(Text, nullable=False)
-    created_at: DateTime = Column(
-        DateTime(), server_default=now(), nullable=False
+    author_id: Mapped[int] = mapped_column(
+        ForeignKey("authors.id", ondelete="CASCADE"), name="autor_comment"
     )
-    conclusion: str = Column(String, nullable=True)
+    author: Mapped["Author"] = relationship(back_populates="comments")
 
-    author_id: int = Column(
-        Integer,
-        ForeignKey("authors.id", ondelete="CASCADE"),
-        name="author_comment",
+    article_id: Mapped[int] = mapped_column(
+        ForeignKey("articles.id", ondelete="CASCADE"), name="article_comment"
     )
-    authors = relationship("Author", back_populates="comments")
-
-    article_id = Column(
-        Integer,
-        ForeignKey("articles.id", ondelete="CASCADE"),
-        name="article_comment",
-    )
-    articles = relationship(
-        "Article",
-        back_populates="comments",
-    )
+    article: Mapped["Article"] = relationship(back_populates="comments")
