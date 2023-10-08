@@ -1,3 +1,5 @@
+import os
+
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
@@ -16,7 +18,7 @@ class DatabaseSettings(BaseSettings):
     testing_pass: str = Field("password", env="TESTING_PASS")
 
     class Config:
-        env_file = "../../.env"
+        env_file = f"{os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))}/.env"  # noqa
         env_file_encoding = "utf-8"
 
     def get_db_url(self):
