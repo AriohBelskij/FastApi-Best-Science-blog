@@ -4,26 +4,26 @@ on:
     branches:
       - '*'
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
       ## Environment  variable
-      DB_HOST_TEST: localhost
-      DB_PORT_TEST: 5432
-      DB_NAME_TEST: mock
-      DB_USER_TEST: mock
-      DB_PASS_TEST: mock
+      TESTING_HOST: localhost
+      TESTING_PORT: 5432
+      TESTING_NAME: mock
+      TESTING_USER: mock
+      TESTING_PASS: mock
 
     services:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_DB: ${{ env.DB_NAME_TEST }}
-          POSTGRES_USER: ${{ env.DB_USER_TEST }}
-          POSTGRES_PASSWORD: ${{ env.DB_PASS_TEST }}
+          POSTGRES_DB: ${{ env.TESTING_NAME }}
+          POSTGRES_USER: ${{ env.TESTING_USER }}
+          POSTGRES_PASSWORD: ${{ env.TESTING_PASS }}
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -51,10 +51,10 @@ jobs:
 
       - name: Set up .env for tests
         run: |
-            echo "DB_HOST=${DB_HOST_TEST}" >> .env
-            echo "DB_PORT=${DB_PORT_TEST}" >> .env
-            echo "DB_NAME=${DB_NAME_TEST}" >> .env
-            echo "DB_USER=${DB_USER_TEST}" >> .env
-            echo "DB_PASS=${DB_PASS_TEST}" >> .env
+            echo "DB_HOST=${TESTING_HOST}" >> .env
+            echo "DB_PORT=${TESTING_PORT}" >> .env
+            echo "DB_NAME=${TESTING_NAME}" >> .env
+            echo "DB_USER=${TESTING_USER}" >> .env
+            echo "DB_PASS=${TESTING_PASS}" >> .env
       - name: Run tests
         run: poetry run pytest

@@ -1,27 +1,26 @@
-import uuid as uuid
-from sqlalchemy import Column, Integer, String, DateTime, UUID
-from sqlalchemy.orm import relationship
+from typing import List, Optional, TYPE_CHECKING
 
-from sqlalchemy.sql.functions import now
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 
-from app.models.article import Article
-from app.models.comment import Comment
-from app.core.database import Base
+from app.models import Base
+
+if TYPE_CHECKING:
+    from .article import Article
+    from .comment import Comment
+
+__all__ = ["Author"]
 
 
 class Author(Base):
-    __tablename__ = "authors"
+    name: Mapped[str]
+    middle_name: Mapped[Optional[str]] = mapped_column(nullable=True)
+    surname: Mapped[str]
+    field: Mapped[str]
 
-    id: int = Column(Integer, primary_key=True)
-    uuid: uuid = Column(UUID(as_uuid=True), nullable=False, default=uuid.uuid4)
-    name: str = Column(String, nullable=False)
-    middle_name: str = Column(String, nullable=True)
-    surname: str = Column(String, nullable=False)
-    created_at: DateTime = Column(
-        DateTime(), server_default=now(), nullable=False
+    articles: Mapped[List["Article"]] = relationship(
+        back_populates="author", cascade="all, delete-orphan"
     )
-    updated_at: DateTime = Column(DateTime(), onupdate=now())
-    field: str = Column(String, nullable=False)
 
-    articles = relationship(Article, back_populates="authors")
-    comments = relationship(Comment, back_populates="authors")
+    comments: Mapped[List["Comment"]] = relationship(
+        back_populates="author", cascade="all, delete-orphan"
+    )

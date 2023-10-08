@@ -6,28 +6,19 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
-from app.core.database import get_async_session, Base, metadata
-from app.core.config import (
-    DB_HOST_TEST,
-    DB_NAME_TEST,
-    DB_PASS_TEST,
-    DB_PORT_TEST,
-    DB_USER_TEST,
-)
+from app.core.config import settings
+from app.core.database import get_async_session
+from app.models.base import Base
 from app.main import app
 
 # DATABASE
-DATABASE_URL_TEST = (
-    f"postgresql+asyncpg://{DB_USER_TEST}:"
-    f"{DB_PASS_TEST}@{DB_HOST_TEST}"
-    f":{DB_PORT_TEST}/{DB_NAME_TEST}"
-)
+DATABASE_URL_TEST = settings.database.get_testing_db_url()
 
 engine_test = create_async_engine(DATABASE_URL_TEST, poolclass=NullPool)
 async_session_maker = sessionmaker(
     engine_test, class_=AsyncSession, expire_on_commit=False
 )
-metadata.bind = engine_test
+Base.metadata.bind = engine_test
 
 
 async def override_get_async_session() -> AsyncGenerator[AsyncSession, None]:
