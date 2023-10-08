@@ -11,7 +11,6 @@ from app.core.database import DATABASE_URL
 from app.models.base import Base
 
 
-
 sys.path.append(os.path.join(sys.path[0], "app"))
 
 
@@ -21,7 +20,6 @@ config = context.config
 
 section = config.config_ini_section
 config.set_section_option(section, "DB_LINK", DATABASE_URL)
-
 
 
 # Interpret the config file for Python logging.
