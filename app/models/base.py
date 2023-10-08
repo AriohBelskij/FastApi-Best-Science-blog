@@ -14,7 +14,7 @@ from sqlalchemy.sql.functions import now
 
 
 class Base(DeclarativeBase):
-    """ # noqa
+    """# noqa
     Base class for all models. Using the __abstract__ method, we restrict the creation of an instance
      of a class. Using the @declared_attr.directive decorator, we declare the __tablename__ method,
       which sets the table name for all child classes based on the name of the child class, making
