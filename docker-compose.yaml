@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  api:
+    build: .
+    volumes:
+      - .:/project
+    ports:
+      - 8000:8000
+    env_file:
+      - .env
+    depends_on:
+      - project_db
+      - testing_db
+    restart: always
+
+  project_db:
+    image: postgres:15.2-alpine
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    env_file:
+      - .env
+    restart:
+      always
+
+
+  testing_db:
+    image: postgres:15.2-alpine
+    ports:
+      - "6000:5432"
+    environment:
+      POSTGRES_USER: ${TESTING_USER}
+      POSTGRES_PASSWORD: ${TESTING_PASS}
+      POSTGRES_DB: ${TESTING_NAME}
+    env_file:
+      - .env
+    restart:
+      always
+
+
+  testing:
+    build:
+      context: .
+      dockerfile: DockerfileTesting
+    command: pytest
+    env_file:
+      - .env
+    depends_on:
+      - testing_db
+    volumes:
+      - .:/project
