@@ -5,6 +5,7 @@ Revises:
 Create Date: 2024-01-11 02:21:00.709939
 
 """
+# flake8: noqa
 from alembic import op
 import sqlalchemy as sa
 
